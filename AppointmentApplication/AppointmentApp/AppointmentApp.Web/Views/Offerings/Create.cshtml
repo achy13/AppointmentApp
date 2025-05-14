@@ -1,0 +1,48 @@
+﻿@model AppointmentApp.Domain.Models.Offering
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Offering</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="OfferingName" class="control-label"></label>
+                <input asp-for="OfferingName" class="form-control" />
+                <span asp-validation-for="OfferingName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OfferingDescription" class="control-label"></label>
+                <input asp-for="OfferingDescription" class="form-control" />
+                <span asp-validation-for="OfferingDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OfferingDuration" class="control-label"></label>
+                <input asp-for="OfferingDuration" class="form-control" />
+                <span asp-validation-for="OfferingDuration" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OfferingPrice" class="control-label"></label>
+                <input asp-for="OfferingPrice" class="form-control" />
+                <span asp-validation-for="OfferingPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

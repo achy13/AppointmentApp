@@ -1,0 +1,119 @@
+﻿@model IEnumerable<AppointmentApp.Domain.Models.Offering>
+@using AppointmentApp.Domain.Models
+@using AppointmentApp.Domain.Identity
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<AppointmentAppUser> UserManager
+
+@{
+    ViewData["Title"] = "Index";
+    var user = await UserManager.GetUserAsync(User);
+}
+
+<h1>Index</h1>
+
+@if(user.Role != null && user.Role == UserRole.ServiceProvider )
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.OfferingName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OfferingDescription)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OfferingDuration)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OfferingPrice)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OfferingName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OfferingDescription)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OfferingDuration)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OfferingPrice)
+                    </td>
+                    @if (user.Role == UserRole.ServiceProvider)
+                    {
+
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </td>
+                    }
+                </tr>
+            }
+
+
+        </tbody>
+    </table>
+
+}
+
+
+
+<h3>Select the offerings you would like to make a reservation for</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OfferingName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OfferingDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OfferingDuration)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OfferingPrice)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @{
+            var list = Model.ToList();
+        }
+
+        @for (int i = 0; i < list.Count; i++)
+        {
+            <tr>
+                <td>
+                    <input type="checkbox" name="[@i].IsSelected" value="true" />
+                    <input type="hidden" name="[@i].IsSelected" value="false" />
+                    <input type="hidden" name="[@i].OfferingId" value="@list[i].Id" />
+                </td>
+                <td>@list[i].OfferingName</td>
+                <td>@list[i].OfferingDescription</td>
+                <td>@list[i].OfferingDuration</td>
+                <td>@list[i].OfferingPrice</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a class="btn btn-primary" asp-controller="Reservations" asp-action="Create">Next</a>
