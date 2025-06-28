@@ -43,6 +43,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddTransient<IOfferingService, OfferingService>();
+builder.Services.AddTransient<IReservationService, ReservationService>();
 
 
 var app = builder.Build();

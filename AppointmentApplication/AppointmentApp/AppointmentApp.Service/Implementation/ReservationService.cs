@@ -1,6 +1,7 @@
 ﻿using AppointmentApp.Domain.Models;
 using AppointmentApp.Repository;
 using AppointmentApp.Service.Interface;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +40,10 @@ namespace AppointmentApp.Service.Implementation
         public Reservation? GetById(Guid Id)
         {
             return _reservationsRepository.Get(selector: x => x,
-                                            predicate: x => x.Id == Id);
+                                            predicate: x => x.Id == Id,
+                                            include: r => r
+                                                .Include(r => r.reservationOfferings!)
+                                                .ThenInclude(ro => ro.Offering));
         }
 
         public Reservation Update(Reservation reservation)

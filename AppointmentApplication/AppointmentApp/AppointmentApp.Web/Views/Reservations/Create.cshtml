@@ -24,7 +24,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="ReservationDate" class="control-label"></label>
-                <input asp-for="ReservationDate" class="form-control" />
+                <input asp-for="ReservationDate" class="form-control" type="datetime-local" value="@ViewBag.StartTime" />
                 <span asp-validation-for="ReservationDate" class="text-danger"></span>
             </div>
             @*there was other code for this input placd
