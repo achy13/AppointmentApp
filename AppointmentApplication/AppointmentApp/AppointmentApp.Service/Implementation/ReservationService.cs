@@ -1,5 +1,5 @@
 ﻿using AppointmentApp.Domain.Models;
-using AppointmentApp.Repository;
+using AppointmentApp.Repository.Interface;
 using AppointmentApp.Service.Interface;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -34,7 +34,13 @@ namespace AppointmentApp.Service.Implementation
 
         public List<Reservation> GetAll()
         {
-            return _reservationsRepository.GetAll(selector: x => x).ToList();
+            return _reservationsRepository.GetAll(
+                selector: r => r,
+                include: r => r
+                    .Include(r => r.User) 
+                    .Include(r => r.reservationOfferings)
+                        .ThenInclude(ro => ro.Offering)
+                     ).ToList();
         }
 
         public Reservation? GetById(Guid Id)

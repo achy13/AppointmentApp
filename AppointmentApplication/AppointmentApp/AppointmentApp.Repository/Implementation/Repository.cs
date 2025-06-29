@@ -1,4 +1,5 @@
 ﻿using AppointmentApp.Domain.Models;
+using AppointmentApp.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using System;
@@ -8,7 +9,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AppointmentApp.Repository
+namespace AppointmentApp.Repository.Implementation
 {
     public class Repository<T> : IRepository<T> where T : BaseEntity
     {
@@ -23,7 +24,7 @@ namespace AppointmentApp.Repository
 
         public T Delete(T entity)
         {
-            _context.Remove (entity);
+            _context.Remove(entity);
             _context.SaveChanges();
             return entity;
         }
@@ -31,11 +32,11 @@ namespace AppointmentApp.Repository
         public E? Get<E>(Expression<Func<T, E>> selector, Expression<Func<T, bool>>? predicate = null, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null, Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null)
         {
             IQueryable<T> query = entities;
-            if(predicate != null)
+            if (predicate != null)
             {
                 query = query.Where(predicate);
             }
-            if(include != null)
+            if (include != null)
             {
                 query = include(query);
             }
@@ -43,21 +44,21 @@ namespace AppointmentApp.Repository
             {
                 return orderBy(query).Select(selector).FirstOrDefault();
             }
-            return query.Select(selector).FirstOrDefault(); 
+            return query.Select(selector).FirstOrDefault();
         }
 
         public IEnumerable<E> GetAll<E>(Expression<Func<T, E>> selector, Expression<Func<T, bool>>? predicate = null, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null, Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null)
         {
             IQueryable<T> query = entities;
-            if(predicate != null)
+            if (predicate != null)
             {
                 query = query.Where(predicate);
             }
-            if(include != null)
+            if (include != null)
             {
                 query = include(query);
             }
-            if(orderBy != null)
+            if (orderBy != null)
             {
                 return orderBy(query).Select(selector).AsEnumerable();
             }
@@ -74,6 +75,13 @@ namespace AppointmentApp.Repository
         public T Update(T entity)
         {
             _context.Update(entity);
+            _context.SaveChanges();
+            return entity;
+        }
+
+        public ICollection<T> InsertMany(ICollection<T> entity)
+        {
+            _context.AddRange(entity);
             _context.SaveChanges();
             return entity;
         }

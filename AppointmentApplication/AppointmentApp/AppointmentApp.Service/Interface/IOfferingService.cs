@@ -14,6 +14,7 @@ namespace AppointmentApp.Service.Interface
         Offering Update(Offering offering);
         Offering DeleteById(Guid Id);
         Offering Add(Offering offering);
-        
+        ICollection<Offering> InsertMany(ICollection<Offering> offerings);
+
     }
 }

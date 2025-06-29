@@ -8,8 +8,8 @@ namespace AppointmentApp.Domain.Models
 {
     public enum UserRole
     {
-        Client = 0,
+        Client = 2,
         ServiceProvider = 1,
-        Admin = 2
+        Admin = 0
     }
 }

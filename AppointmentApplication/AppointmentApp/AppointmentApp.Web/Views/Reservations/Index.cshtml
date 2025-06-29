@@ -1,42 +1,104 @@
 ﻿@{
-    ViewData["Title"] = "Calender";
+    ViewData["Title"] = "Календар";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@section Styles {
+    <style>
+        .fc-event-time {
+            display: none !important;
+        }
+
+        .fc-event-title {
+            white-space: normal !important;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
+        .fc-event {
+            min-height: 60px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            padding: 6px;
+            font-size: 14px;
+        }
+
+        .fc .fc-timegrid-slot {
+            height: 60px !important;
+
+        }
+
+        .fc-event .btn {
+            margin-left: 10px;
+            padding: 2px 6px;
+            color: white;
+            background-color: cornflowerblue;
+        }
+    </style>
+}
+
+<div id="calendar" data-role="@ViewBag.UserRole"></div>
 
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var calendarEl = document.getElementById('calendar');
-            var isAdminOrProvider = @Json.Serialize(User.IsInRole("Admin") || User.IsInRole("ServiceProvider"));
+            const calendarEl = document.getElementById('calendar');
+            const userRole = calendarEl.dataset.role;
+            const isAdminOrProvider = userRole === "Admin" || userRole === "ServiceProvider";
 
-            var calendar = new FullCalendar.Calendar(calendarEl, {
+            const calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'timeGridWeek',
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
-                slotDuration: '00:30:00', // Слотови од 30 минути
-                slotMinTime: '08:00:00', // Работно време од 8:00
-                slotMaxTime: '20:00:00', // Работно време до 20:00
+                slotDuration: '00:30:00',
+                slotMinTime: '08:00:00',
+                slotMaxTime: '20:00:00',
                 selectable: true,
+
                 select: function (info) {
-                    // Отвори форма за креирање резервација
-                    window.location.href = '/Reservations/Create?start=' + encodeURIComponent(info.startStr);
+                    const startDate = new Date(info.startStr);
+                    const formattedStart = startDate.getFullYear() + '-' +
+                        String(startDate.getMonth() + 1).padStart(2, '0') + '-' +
+                        String(startDate.getDate()).padStart(2, '0') + 'T' +
+                        String(startDate.getHours()).padStart(2, '0') + ':' +
+                        String(startDate.getMinutes()).padStart(2, '0');
+
+                    window.location.href = '/Reservations/Create?start=' + encodeURIComponent(formattedStart);
                 },
+
                 events: '/Reservations/GetEvents',
-                eventDisplay: 'block',
+
                 eventClick: function (info) {
-                    if (isAdminOrProvider) {
-                        alert('Термин: ' + info.event.title + '\nПочеток: ' + info.event.start.toLocaleString() + '\nКрај: ' + info.event.end.toLocaleString());
-                    } else {
-                        alert('Зафатен термин');
+                    if (!isAdminOrProvider) {
+                        info.jsEvent.preventDefault();
+                        return;
                     }
+                    window.location.href = '/Reservations/Details/' + info.event.id;
                 },
-                eventContent: function (info) {
-                    // Прикажи "Зафатено" за клиенти, а целосен наслов за админ/сервис провајдер
-                    return { html: isAdminOrProvider ? info.event.title : 'Зафатено' };
+
+                eventDidMount: function (info) {
+                    const titleContainer = info.el.querySelector('.fc-event-title');
+                    if (!titleContainer) return;
+
+                    titleContainer.innerHTML = '';
+
+                    const titleText = document.createElement('span');
+                    titleText.textContent = info.event.title;
+                    titleContainer.appendChild(titleText);
+
+                    if (isAdminOrProvider && info.event.title !== 'Booked') {
+                        const btn = document.createElement('a');
+                        btn.textContent = ' Details';
+                        btn.href = '/Reservations/Details/' + info.event.id;
+                        btn.className = 'btn btn-sm btn-outline-dark';
+                        btn.style.marginLeft = '10px';
+                        btn.style.fontSize = '0.75rem';
+                        titleContainer.appendChild(btn);
+                    }
                 }
             });
 
@@ -44,8 +106,3 @@
         });
     </script>
 }
-
-
-
-<div id="calendar"></div>
-<div id="message" style="display:none; margin-top: 20px;" class="alert alert-info"></div>

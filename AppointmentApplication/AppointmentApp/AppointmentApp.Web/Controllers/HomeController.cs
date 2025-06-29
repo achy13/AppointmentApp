@@ -15,6 +15,20 @@ namespace AppointmentApp.Web.Controllers
 
         public IActionResult Index()
         {
+            string userRole = "Anonymous";
+
+            if (User.Identity.IsAuthenticated)
+            {
+                if (User.IsInRole("Admin"))
+                    userRole = "Admin";
+                else if (User.IsInRole("ServiceProvider"))
+                    userRole = "ServiceProvider";
+                else if (User.IsInRole("Client"))
+                    userRole = "Client";
+            }
+
+            ViewBag.UserRole = userRole;
+
             return View();
         }
 

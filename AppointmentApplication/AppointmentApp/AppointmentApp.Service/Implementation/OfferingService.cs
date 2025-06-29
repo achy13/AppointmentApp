@@ -1,5 +1,5 @@
 ﻿using AppointmentApp.Domain.Models;
-using AppointmentApp.Repository;
+using AppointmentApp.Repository.Interface;
 using AppointmentApp.Service.Interface;
 using System;
 using System.Collections.Generic;
@@ -45,6 +45,13 @@ namespace AppointmentApp.Service.Implementation
         public Offering Update(Offering offering)
         {
             return _offeringRepository.Update(offering);
+        }
+
+        
+
+        public ICollection<Offering> InsertMany(ICollection<Offering> offerings)
+        {
+            return _offeringRepository.InsertMany(offerings);
         }
     }
 }

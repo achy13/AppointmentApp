@@ -5,7 +5,7 @@
 namespace AppointmentApp.Repository.Migrations
 {
     /// <inheritdoc />
-    public partial class AddOfferings : Migration
+    public partial class RolesChanged : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
